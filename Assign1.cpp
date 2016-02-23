@@ -14,8 +14,8 @@ data in the merged StudentDataPlus.tsv file in a second new file, StudentSummary
 #include <string>
 using namespace std;
 
-void tester (string idCode);
-void switch1and2();
+//void tester (string idCode);
+//void switch1and2();
 
 int main()
 {
@@ -45,7 +45,7 @@ int main()
     while (istrStudent.eof() == 0)
     {
       istrStudent >> emplID >> semester >> subjectCode1 >> catCode1 >> letterGrade >> numGrade;
-      ostrDataPlus << emplID << "\t" << semester << "\t" << subjectCode1 << "\t" << catCode1 << "\t" << letterGrade << "\t" << numGrade;
+      ostrDataPlus << emplID << "\t" << semester << "\t" << subjectCode1 << "\t" << catCode1 << "\t" << letterGrade << "\t" << numGrade << "\t";
 
       istrCourse.clear();          // Goes to beginning of HunterCourses.tsv file to search
       istrCourse.seekg(ios::beg);
@@ -61,7 +61,7 @@ int main()
         // Match is found.
         if (subjectCode1 == subjectCode2 && catCode1 == catCode2)
         {
-          ostrDataPlus << "\t" << hours << "\t" << desigCode << endl;
+          ostrDataPlus << "\t" << hours << "\t" << desigCode << "\t";
           foundFlag = true;
           break;
         }
@@ -75,7 +75,7 @@ int main()
       {
         hours = 3.0;
         desigCode = "RNL";
-        ostrDataPlus << "\t" << hours << "\t" << desigCode << endl;
+        ostrDataPlus << "\t" << hours << "\t" << desigCode << "\t";
       }
     } 
     istrStudent.close();
@@ -97,28 +97,30 @@ int main()
     exit(1);
   }
 
-  int emplID1, emplID2, count = 1, cscount = 0, nonLibCount = 0;
+  int emplID1, emplID2, semester2, count1 = 1, cscount = 0, nonLibCount = 0;
   float numGrade2, hours2, gpa, csciGpa, nonLibPercent;
-  string subjectCode2, desigCode2;
+  string desigCode2, letterGrade2;
   
   ofstream testStream;
-  testStream.open("testfile.tsv");
-      
+  testStream.open("testfile.tsv"); 
+     
   istrDataPlus >> emplID1 >> semester >> subjectCode1 >> catCode1 >> letterGrade >> numGrade
                >> hours >> desigCode;
 
-  tester("below emplID1, out of while loop"); 
-
   while (istrDataPlus.eof() == 0)
   {
-    istrDataPlus >> emplID2 >> semester >> subjectCode2 >> catCode1 >> letterGrade >> numGrade2
+    istrDataPlus >> emplID2 >> semester2 >> subjectCode2 >> catCode2 >> letterGrade2 >> numGrade2
                  >> hours2 >> desigCode2;
-    
-    tester("below emplID2");
-
-    if (count == 1)
+    if (count1 == 1)
     {
-      numGrade = gpa;
+      if (numGrade < 0)
+      {
+        numGrade = 0;
+      }
+      else
+      {
+        numGrade = gpa;
+      }
       if (subjectCode1 == "CSCI")
       {
         csciGpa = numGrade;
@@ -126,88 +128,85 @@ int main()
       }
       else
       {
-        csciGpa = 0.0;
+        csciGpa = 0;
       }
-      if (desigCode1 == "RNL" || desigCode1 == "MNL" || desigCode1 == "GNL")
+      if (desigCode == "RNL" || desigCode == "MNL" || desigCode == "GNL")
       {
         nonLibPercent = 1.0;
         nonLibCount++;
       }
       else
       {
-        nonLibPercent = 0.0;
+        nonLibPercent = 0;
       }
       if (emplID1 != emplID2)
       {
-        ostrSummary << emplID1 << "\t" << gpa << "\t" << csciGpa << "\t" << nonLibPercent << endl;
-        count = 1;
+        ostrSummary << emplID1 << "\t" << gpa << "\t" << csciGpa << "\t" << nonLibPercent << "\t";
+        count1 = 1;
         cscount = 0;
         nonLibCount = 0;
       }
       else
       {
-         count++;
+         count1++;
       }
-      tester("end of first big IF/else");
-
+      emplID1 = emplID2;
+      semester = semester2;
+      subjectCode1 = subjectCode2;
+      catCode1 = catCode2;
+      letterGrade = letterGrade2;
+      numGrade = numGrade2;
+      hours = hours2;
+      desigCode = desigCode2;
     }
     else
     {
-      gpa = (gpa + numGrade)/count;
+      if (numGrade < 0)
+      {
+        numGrade = 0;
+        gpa = (gpa + numGrade)/count1;
+      }
+      else
+      {
+      gpa = (gpa + numGrade)/count1;
+      }
       if (subjectCode1 == "CSCI")
       {
         cscount++;
         csciGpa = (csciGpa + numGrade)/cscount;
       }
-      if (desigCode1 == "RNL" || desigCode1 == "MNL" || desigCode1 == "GNL")
+      if (desigCode == "RNL" || desigCode == "MNL" || desigCode == "GNL")
       {
-        nonLibPercent = nonLibCount/count;
+        nonLibPercent = nonLibCount/count1;
         nonLibCount++;
       }
       if (emplID1 != emplID2)
       {
-        ostrSummary << emplID1 << "\t" << gpa << "\t" << csciGpa << "\t" << nonLibPercent << endl;
-        count = 1;
+        ostrSummary << emplID1 << "\t" << gpa << "\t" << csciGpa << "\t" << nonLibPercent << "\t";
+        count1 = 1;
         cscount = 0;
         nonLibCount = 0;
       }
       else
       {
-        count++;
+        count1++;
       }
-      tester("end of first big if/ELSE");
-
     }
-    switch1and2();
-    tester("after switch1and2");
+    emplID1 = emplID2;
+    semester = semester2;
+    subjectCode1 = subjectCode2;
+    catCode1 = catCode2;
+    letterGrade = letterGrade2;
+    numGrade = numGrade2;
+    hours = hours2;
+    desigCode = desigCode2;  
   }  
-  
   istrDataPlus.close();
   ostrSummary.close();
   testStream.close();
+
   return 0;
 }
 
-void tester (string idCode)
-{
-  testStream << "idCode = " << idCode << "\tcount = " << count << "\tEmplID1: " << emplID1 << "\tsemester: " << semester << "\tsubjectCode1: " << subjectCode1 << "\tcatCode1: " << catCode1
-       << "\tletterGrade: " << letterGrade << "\tnumGrade: " << numGrade << "\thours: " << hours << "\tdesigCode: " << desigCode << endl;
-
-  testStream << "idCode = " << idCode << "\tcount = " << count << "\tEmplID2: " << emplID2 << "\tsemester: " << semester << "\tsubjectCode2: " << subjectCode2 << "\tcatCode1: " << catCode1
-       << "\tletterGrade: " << letterGrade << "\tnumGrade2: " << numGrade2 << "\thours2: " << hours2 << "\tdesigCode2: " << desigCode2 << endl; 
-
-  testStream << "idCode = " << idCode << "\tcount = " << count << "\tgpa: " << gpa << "\tcscigpa: " << cscigpa << "\tnonLibPercent: " << nonLibPercent << endl;
-
-  testStream << "idCode = " << idCode << "\tcount = " << count << "\tcscount = " << cscount << "\tnonLibCount = " << nonLibCount << endl;
-}
-
-void switch1and2 ()
-{
-  emplID2 = emplID1;
-  subjectCode2 = subjectCode1;
-  numGrade2 = numGrade;
-  hours2 = hours;
-  desigCode2 = desigCode;
-}
 
        
