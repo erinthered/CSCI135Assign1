@@ -161,12 +161,10 @@ int main()
 		{ */
 			if (numGrade > 0.)
 			{
-				// gpacount++;
 				gpaSum += weightedGPA(hours1, gpa, gpacount, numGrade);
 			}
 			if (subjectCode1 == "CSCI" && numGrade > 0.)
 			{
-			//	cscount++;
 				csciGpaSum += weightedGPA(hours1, csciGpa, cscount, numGrade);
 			}
 			if (desigCode == "RNL" || desigCode == "MNL" || desigCode == "GNL")
